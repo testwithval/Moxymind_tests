@@ -1,9 +1,18 @@
-import { defineConfig, devices } from '@playwright/test';
+import fs from 'node:fs';
+import { chromium, defineConfig, devices } from '@playwright/test';
 
 /**
  * Sauce Demo UI tests (Chromium).
  * Run: npm test
+ *
+ * Prefer the Chromium build Playwright installs. If that binary is missing
+ * because the download CDN timed out, fall back to local Chrome so the
+ * default command still starts.
  */
+const browserLaunch = fs.existsSync(chromium.executablePath())
+  ? {}
+  : { channel: 'chrome' as const };
+
 export default defineConfig({
   testDir: './tests',
   fullyParallel: true,
@@ -18,7 +27,7 @@ export default defineConfig({
     // Sauce Demo exposes stable data-test attributes (not data-testid).
     testIdAttribute: 'data-test',
     screenshot: 'only-on-failure',
-    // Video needs Playwright's ffmpeg download; disabled while CDN installs time out.
+    // Screenshots are enough; video stays off so a missing ffmpeg download cannot fail the run.
     video: 'off',
     trace: 'on-first-retry',
     actionTimeout: 10_000,
@@ -28,8 +37,7 @@ export default defineConfig({
       name: 'chromium',
       use: {
         ...devices['Desktop Chrome'],
-        // Use installed Chrome while Playwright's Chromium download times out.
-        channel: 'chrome',
+        ...browserLaunch,
       },
     },
   ],

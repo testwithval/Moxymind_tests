@@ -9,4 +9,4 @@ export const usersToCreate = [
   },
 ] as const;
 
-export const apiResponseTimeLimitMs = 10_000;
+export const apiResponseTimeLimitMs = 6_500;

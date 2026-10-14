@@ -23,8 +23,9 @@ Specs live in `tests/ui/` and `tests/api/` and repeat the “why essential” ra
 
 - Node.js **22** (or 20+)
 - npm
-- Google Chrome installed locally
 - Network access to `https://www.saucedemo.com/`
+
+UI tests launch the Chromium build Playwright downloads. If that binary is not on disk yet, the run falls back to a locally installed Google Chrome, so `npm test` does not stop only because the download service timed out.
 
 ## Run locally
 
@@ -32,16 +33,17 @@ Specs live in `tests/ui/` and `tests/api/` and repeat the “why essential” ra
 git clone https://github.com/testwithval/Moxymind_tests.git
 cd Moxymind_tests
 npm install
+npx playwright install chromium
 npm test
 ```
 
-That is the command-line demo: all UI and API tests. UI tests run in visible Google Chrome locally; API tests run without a browser. CI runs the suite headless.
+That is the command-line demo: all UI and API tests. UI tests run in visible Playwright Chromium locally; API tests run without a browser. CI runs the suite headless.
 
 ### Other useful commands
 
 | Command | What it does |
 |---------|----------------|
-| `npm test` | Run the suite with visible Google Chrome locally |
+| `npm test` | Run the suite with visible Playwright Chromium locally |
 | `npx playwright test --headed` | Watch the browser |
 | `npx playwright test tests/ui` | Run only the UI tests |
 | `npx playwright test tests/api` | Run only the ReqRes API tests |
@@ -58,7 +60,7 @@ HTML report is written to `playwright-report/` after each run.
 | Scenario | Assertions |
 |----------|------------|
 | `GET /api/users?page=1&per_page=12` | Status `200`, `total`, first two `last_name` values, `data.length === total`, and response data types |
-| `POST /api/users` | Data-driven requests from `src/data/api-test-data.ts`, status `201`, response time under the configured `10,000 ms` limit, echoed `name` and `job`, plus generated `id` and `createdAt` |
+| `POST /api/users` | Data-driven requests from `src/data/api-test-data.ts`, status `201`, response time under the configured `6,500 ms` limit, echoed `name` and `job`, plus generated `id` and `createdAt` |
 
 ## Demo credentials
 
